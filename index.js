@@ -22,5 +22,5 @@ main()
     .catch(err => console.log(err))
 
 app.listen(port, () => {
-    console.log(`Backend  SharingMe emitiendo por el puerto ${port}`)
+    console.log(`Backend de SharingMe emitiendo por el puerto ${port}`)
 });

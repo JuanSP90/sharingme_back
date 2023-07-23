@@ -10,8 +10,6 @@ const UserController = {
 
         try {
             const user = await User.findOne({ email });
-            console.log('soy user pass', user.password)
-            console.log('soy  pass', password)
             if (!user) {
                 return res.status(401).json({ error: "El usuario no existe" });
             }
@@ -39,10 +37,19 @@ const UserController = {
         }
     },
 
+    // getUser: async (req, res) => {
+    //     const { userId } = req.params;
+    //     try {
+    //         const user = await User.findOne({ _id: userId });
+    //         res.json(user);
+    //     } catch (error) {
+    //         res.status(500).json({ error: "Error al buscar el usuario" });
+    //     }
+    // },
     getUser: async (req, res) => {
-        const { userId } = req.params;
+        const { userName } = req.params;
         try {
-            const user = await User.findOne({ _id: userId });
+            const user = await User.findOne({ userName: userName });
             res.json(user);
         } catch (error) {
             res.status(500).json({ error: "Error al buscar el usuario" });
@@ -52,10 +59,9 @@ const UserController = {
     getUserProfile: async (req, res) => {
         try {
             console.log('soy el req.info en UserController', req.userInfo.id)
-            const { email, _id, userName, role } = await User.findById(req.userInfo.id)
-            res.json({ email, _id, userName, role });
+            const { email, _id, userName, role, links, description, backgroundColor } = await User.findById(req.userInfo.id)
+            res.json({ email, _id, userName, role, links, description, backgroundColor });
         } catch (error) {
-            console.log("este es el error ", error)
             res.status(500).json({ error: "Error al buscar el usuario en /me" });
         }
     },
@@ -65,7 +71,7 @@ const UserController = {
         try {
             const existingEmail = await User.findOne({ email });
             if (existingEmail) {
-                console.log(email);
+
                 return res.status(401).json({ error: "El email ya está registrado" });
             }
             const existingUserName = await User.findOne({ userName });
@@ -78,7 +84,10 @@ const UserController = {
                 email,
                 password,
                 userName,
-                role: 1
+                role: 1,
+                links: [],
+                description: '',
+                backgroundColor: ''
             });
             await newUser.save();
 
@@ -106,6 +115,7 @@ const UserController = {
 
         } catch (error) {
             res.status(500).json({ error: "Error en el servidor" });
+            console.log('el error en el usecontroller en el adduser', error)
         }
     },
 
@@ -126,7 +136,7 @@ const UserController = {
     },
 
     updateUser: async (req, res) => {
-        const { userName, password, email, balance, realState, role } = await User.findById(req.userInfo.id);
+        const { userName, password, email, role, links, description, backgroundColor } = await User.findById(req.userInfo.id);
         if (role === 2) {
             await User.updateOne(
                 { _id: userId },
@@ -135,9 +145,10 @@ const UserController = {
                         userName,
                         email,
                         password,
-                        balance,
-                        realState,
-                        role
+                        role,
+                        links,
+                        description,
+                        backgroundColor
                     },
                 }
             );
@@ -147,7 +158,7 @@ const UserController = {
     },
     updateUserConfig: async (req, res) => {
         const userId = req.userInfo.id;
-        const { userName, password, email } = req.body;
+        const { userName, password, email, description, backgroundColor, links } = req.body;
 
 
         try {
@@ -164,7 +175,7 @@ const UserController = {
 
             if (userName) {
                 const existingUserName = await User.findOne({ userName });
-                console.log('estoy dentor de exisiting', existingUserName);
+
                 if (existingUserName) {
                     return res
                         .status(401)
@@ -181,7 +192,7 @@ const UserController = {
             }
             const user = await User.findByIdAndUpdate(
                 userId,
-                { $set: { userName, email } },
+                { $set: { userName, email, backgroundColor, links, description } },
                 { new: true }
             );
 
