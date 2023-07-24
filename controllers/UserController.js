@@ -119,43 +119,43 @@ const UserController = {
         }
     },
 
-    deleteUser: async (req, res) => {
-        const { role } = await User.findById(req.userInfo.id);
-        if (role === 2) {
-            const { userId } = req.params;
-            await User.deleteOne({ _id: userId });
-            res.json(`El usuario con id ${userId} ha sido eliminado`);
-        }
-    },
+    // deleteUser: async (req, res) => {
+    //     const { role } = await User.findById(req.userInfo.id);
+    //     if (role === 2) {
+    //         const { userId } = req.params;
+    //         await User.deleteOne({ _id: userId });
+    //         res.json(`El usuario con id ${userId} ha sido eliminado`);
+    //     }
+    // },
 
-    putUser: async (req, res) => {
-        const { userId } = req.params;
-        await User.findOneAndReplace({ _id: userId }, { ...req.body });
-        const user = await User.findOne({ _id: userId });
-        res.json(user);
-    },
+    // putUser: async (req, res) => {
+    //     const { userId } = req.params;
+    //     await User.findOneAndReplace({ _id: userId }, { ...req.body });
+    //     const user = await User.findOne({ _id: userId });
+    //     res.json(user);
+    // },
 
-    updateUser: async (req, res) => {
-        const { userName, password, email, role, links, description, backgroundColor } = await User.findById(req.userInfo.id);
-        if (role === 2) {
-            await User.updateOne(
-                { _id: userId },
-                {
-                    $set: {
-                        userName,
-                        email,
-                        password,
-                        role,
-                        links,
-                        description,
-                        backgroundColor
-                    },
-                }
-            );
-        } else {
-            res.json('No tiene autorizacion para realizar esta tarea')
-        }
-    },
+    // updateUser: async (req, res) => {
+    //     const { userName, password, email, role, links, description, backgroundColor } = await User.findById(req.userInfo.id);
+    //     if (role === 2) {
+    //         await User.updateOne(
+    //             { _id: userId },
+    //             {
+    //                 $set: {
+    //                     userName,
+    //                     email,
+    //                     password,
+    //                     role,
+    //                     links,
+    //                     description,
+    //                     backgroundColor
+    //                 },
+    //             }
+    //         );
+    //     } else {
+    //         res.json('No tiene autorizacion para realizar esta tarea')
+    //     }
+    // },
     updateUserConfig: async (req, res) => {
         const userId = req.userInfo.id;
         const { userName, password, email, description, backgroundColor, links } = req.body;
