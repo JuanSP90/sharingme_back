@@ -12,10 +12,12 @@ const usersSchema = new mongoose.Schema({
         {
             title: { type: String },
             url: { type: String },
+            icon: { type: String }
         },
     ],
     description: { type: String },
     backgroundColor: { type: String },
+    geolocation: { type: Object }
 
 });
 usersSchema.pre('save', async function (next) {
