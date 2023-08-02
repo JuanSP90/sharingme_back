@@ -1,1 +1,9 @@
-en l .env poner la ruta del localhost y asi no hay q cambairlo
+l .env poner la ruta del localhost y asi no hay q cambairlo
+
+
+
+en el front un boton en Personalizar tu entorno pongo una rosquita y hago el cambiar email username passqword y CIUDAD
+hay una funcion q le pide al navegador tus coordenadas y esas que las guarde en tu perfil
+cuando pongamos la ciudad y submit que haga una llamada que guarde esa coordenada en la base de datos
+
+poner el mapa de google y que nos represente las coordenadas de la coleccion en él

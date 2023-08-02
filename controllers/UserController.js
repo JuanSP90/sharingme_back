@@ -2,7 +2,7 @@ const User = require("../modules/userModel");
 const jwt = require("jsonwebtoken");
 const mySecret = process.env.MYSECRET;
 const bcrypt = require("bcrypt");
-// const transporter = require('../mailConfig')
+const transporter = require('../mailConfig')
 
 const UserController = {
     loginUser: async (req, res) => {
@@ -87,7 +87,8 @@ const UserController = {
                 role: 1,
                 links: [],
                 description: '',
-                backgroundColor: ''
+                backgroundColor: '',
+                geolocation: ''
             });
             await newUser.save();
 
@@ -98,17 +99,17 @@ const UserController = {
             );
 
 
-            // const mailOptions = {
-            //     to: newUser.email,
-            //     subject: "Finantial Challenge : Registro finalizado. ",
-            //     text: "Bienvenido a nuestro juego",
-            // }
+            const mailOptions = {
+                to: newUser.email,
+                subject: "Bienvenido a SharingMe ",
+                text: "Bienvenido a nuestra red social donde podras personalizar tu perfil y compartir todos tus enlaces",
+            }
 
-            // try {
-            //     await transporter.sendMail(mailOptions);
-            // } catch (error) {
-            //     console.log(error);
-            // }
+            try {
+                await transporter.sendMail(mailOptions);
+            } catch (error) {
+                console.log(error);
+            }
 
             // console.log('despues de enviar mail');
             res.json({ message: "Registro exitoso", token });
@@ -158,7 +159,7 @@ const UserController = {
     // },
     updateUserConfig: async (req, res) => {
         const userId = req.userInfo.id;
-        const { userName, password, email, description, backgroundColor, links } = req.body;
+        const { userName, password, email, description, backgroundColor, links, geolocation } = req.body;
 
 
         try {
@@ -192,16 +193,53 @@ const UserController = {
             }
             const user = await User.findByIdAndUpdate(
                 userId,
-                { $set: { userName, email, backgroundColor, links, description } },
+                { $set: { userName, email, backgroundColor, links, description, geolocation } },
                 { new: true }
             );
 
             res.json(user);
         } catch (error) {
-            console.error('Error al actualizar el nombre de usuario:', error);
-            res.status(500).json({ error: 'Error al actualizar el nombre de usuario' });
+            console.error('Error al actualizar el usuario en el backend:', error);
+            res.status(500).json({ error: 'Error al actualizar el usuario en el backend:' });
         }
     },
+
+    forgotPassword: async (req, res) => {
+        const { email } = req.body;
+        const user = await User.findOne({ email });
+
+        if (user) {
+            try {
+                const randomPassword = Math.floor(Math.random() * (99999 - 10000 + 1)) + 10000;
+                user.password = randomPassword;
+                await user.save();
+                // await User.updateOne(
+                //     { $set: { password: randomPassword } }
+                // )
+
+                const mailOptions = {
+                    to: email,
+                    subject: "Recupera tu contraseña de SharingMe ",
+                    text: `Aqui le mandamos una nueva contraseña, porfavor entre a su perfil y cambiela.
+
+                    Nueva Contraseña: ${randomPassword}
+                    
+                    Muchas gracias por confiar en nosotros, SharingMe`,
+                }
+
+
+                await transporter.sendMail(mailOptions);
+                return res
+                    .status(200)
+                    .json("Email con nueva contraseña enviado con exito");
+
+            } catch (error) {
+                console.error('Error al enviar la forgotPassword', error);
+                res.status(500).json({ error: 'Error al enviar la forgotPassword' });
+            }
+        }
+
+    }
 };
 
 module.exports = UserController;

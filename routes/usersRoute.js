@@ -12,6 +12,7 @@ usersRouter.post("/", userController.addUser);
 // usersRouter.patch("/admin/:userId", auth.checkIfAuth, userController.updateUser);
 usersRouter.patch("/updateUser", auth.checkIfAuth, userController.updateUserConfig);
 // usersRouter.delete("/:userId", userController.deleteUser);
+usersRouter.post("/forgotPassword", userController.forgotPassword);
 
 
 
