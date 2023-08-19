@@ -9,13 +9,9 @@ app.use(express.json())
 app.use(cors())
 app.use("/users", Users)
 
-
-
-
 async function main() {
     return await mongoose.connect(process.env.CONNECTIONDB)
 }
-
 
 main()
     .then(() => console.log('Estamos conectados a la DB'))

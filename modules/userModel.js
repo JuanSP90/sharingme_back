@@ -10,15 +10,13 @@ const usersSchema = new mongoose.Schema({
     },
     links: [
         {
-            title: { type: String },
             url: { type: String },
-            icon: { type: String }
+            // icon: { type: String }
         },
     ],
     description: { type: String },
     backgroundColor: { type: String },
-    geolocation: { type: Object }
-
+    location: { type: String }
 });
 usersSchema.pre('save', async function (next) {
     const user = this;

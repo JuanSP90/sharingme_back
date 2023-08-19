@@ -37,15 +37,18 @@ const UserController = {
         }
     },
 
-    // getUser: async (req, res) => {
-    //     const { userId } = req.params;
-    //     try {
-    //         const user = await User.findOne({ _id: userId });
-    //         res.json(user);
-    //     } catch (error) {
-    //         res.status(500).json({ error: "Error al buscar el usuario" });
-    //     }
-    // },
+    getUserMapAndCount: async (req, res) => {
+        try {
+            const users = await User.find();
+            const locations = users.map(user => user.location);
+            const userCount = users.length;
+            const uniqueLocationCount = new Set(locations.filter(location => location)).size;
+            res.json({ locations, userCount, uniqueLocationCount });
+        } catch (error) {
+            res.status(500).json({ error: "Error al traer las ubicaciones y el número de usuarios para el mapa" });
+        }
+    },
+
     getUser: async (req, res) => {
         const { userName } = req.params;
         try {
@@ -58,7 +61,6 @@ const UserController = {
 
     getUserProfile: async (req, res) => {
         try {
-            console.log('soy el req.info en UserController', req.userInfo.id)
             const { email, _id, userName, role, links, description, backgroundColor } = await User.findById(req.userInfo.id)
             res.json({ email, _id, userName, role, links, description, backgroundColor });
         } catch (error) {
@@ -88,7 +90,7 @@ const UserController = {
                 links: [],
                 description: '',
                 backgroundColor: '',
-                geolocation: ''
+                location: ''
             });
             await newUser.save();
 
@@ -97,7 +99,6 @@ const UserController = {
                 mySecret,
                 { expiresIn: "1h" }
             );
-
 
             const mailOptions = {
                 to: newUser.email,
@@ -110,61 +111,18 @@ const UserController = {
             } catch (error) {
                 console.log(error);
             }
-
-            // console.log('despues de enviar mail');
             res.json({ message: "Registro exitoso", token });
 
         } catch (error) {
             res.status(500).json({ error: "Error en el servidor" });
-            console.log('el error en el usecontroller en el adduser', error)
         }
     },
 
-    // deleteUser: async (req, res) => {
-    //     const { role } = await User.findById(req.userInfo.id);
-    //     if (role === 2) {
-    //         const { userId } = req.params;
-    //         await User.deleteOne({ _id: userId });
-    //         res.json(`El usuario con id ${userId} ha sido eliminado`);
-    //     }
-    // },
-
-    // putUser: async (req, res) => {
-    //     const { userId } = req.params;
-    //     await User.findOneAndReplace({ _id: userId }, { ...req.body });
-    //     const user = await User.findOne({ _id: userId });
-    //     res.json(user);
-    // },
-
-    // updateUser: async (req, res) => {
-    //     const { userName, password, email, role, links, description, backgroundColor } = await User.findById(req.userInfo.id);
-    //     if (role === 2) {
-    //         await User.updateOne(
-    //             { _id: userId },
-    //             {
-    //                 $set: {
-    //                     userName,
-    //                     email,
-    //                     password,
-    //                     role,
-    //                     links,
-    //                     description,
-    //                     backgroundColor
-    //                 },
-    //             }
-    //         );
-    //     } else {
-    //         res.json('No tiene autorizacion para realizar esta tarea')
-    //     }
-    // },
     updateUserConfig: async (req, res) => {
         const userId = req.userInfo.id;
-        const { userName, password, email, description, backgroundColor, links, geolocation } = req.body;
-
+        const { userName, password, email, description, backgroundColor, links, location } = req.body;
 
         try {
-
-
             if (password) {
                 const salt = await bcrypt.genSalt(10);
                 const hashedPassword = await bcrypt.hash(password, salt);
@@ -193,7 +151,7 @@ const UserController = {
             }
             const user = await User.findByIdAndUpdate(
                 userId,
-                { $set: { userName, email, backgroundColor, links, description, geolocation } },
+                { $set: { userName, email, backgroundColor, links, description, location } },
                 { new: true }
             );
 
@@ -213,9 +171,6 @@ const UserController = {
                 const randomPassword = Math.floor(Math.random() * (99999 - 10000 + 1)) + 10000;
                 user.password = randomPassword;
                 await user.save();
-                // await User.updateOne(
-                //     { $set: { password: randomPassword } }
-                // )
 
                 const mailOptions = {
                     to: email,
