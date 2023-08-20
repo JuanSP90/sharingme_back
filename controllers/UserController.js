@@ -90,7 +90,10 @@ const UserController = {
                 links: [],
                 description: '',
                 backgroundColor: '',
-                location: ''
+                location: '',
+                tag1: '',
+                tag2: '',
+                tag3: ''
             });
             await newUser.save();
 
@@ -120,7 +123,7 @@ const UserController = {
 
     updateUserConfig: async (req, res) => {
         const userId = req.userInfo.id;
-        const { userName, password, email, description, backgroundColor, links, location } = req.body;
+        const { userName, password, email, description, backgroundColor, links, location, tag1, tag2, tag3 } = req.body;
 
         try {
             if (password) {
@@ -149,9 +152,14 @@ const UserController = {
                     return res.status(401).json({ error: "El email ya está registrado" });
                 }
             }
+
+            if ((tag1 && tag1.length > 10) || (tag2 && tag2.length > 10) || (tag3 && tag3.length > 10)) {
+                return res.status(400).json({ error: 'Longitud máxima excedida' });
+            }
+
             const user = await User.findByIdAndUpdate(
                 userId,
-                { $set: { userName, email, backgroundColor, links, description, location } },
+                { $set: { userName, email, backgroundColor, links, description, location, tag1, tag2, tag3 } },
                 { new: true }
             );
 

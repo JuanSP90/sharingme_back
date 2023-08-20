@@ -16,7 +16,10 @@ const usersSchema = new mongoose.Schema({
     ],
     description: { type: String },
     backgroundColor: { type: String },
-    location: { type: String }
+    location: { type: String },
+    tag1: { type: String },
+    tag2: { type: String },
+    tag3: { type: String }
 });
 usersSchema.pre('save', async function (next) {
     const user = this;
