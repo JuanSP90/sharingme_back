@@ -6,7 +6,6 @@ const auth = {
 
         if (!req.headers.authorization) {
             return res.status(401).send("token inválido");
-
         }
         const token = req.headers.authorization.split(' ')[1];
         if (!token) {
@@ -19,14 +18,12 @@ const auth = {
         try {
             const decodedToken = await jwt.verify(token, mySecret);
             req.userInfo = decodedToken
-            console.log('en el middleware', req.userInfo)
             next()
         } catch {
             res.status(401).send("token inválido");
 
         }
     }
-
 }
 
 module.exports = auth;
