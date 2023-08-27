@@ -4,6 +4,7 @@ const Users = require("./routes/usersRoute");
 const express = require('express');
 const https = require('https');
 const fs = require('fs');
+const cors = require('cors'); // Agrega esta línea
 
 const app = express();
 const port = 3001;
@@ -13,11 +14,7 @@ const options = {
     cert: fs.readFileSync('./certificates/cert.pem')
 }
 
-// app.use((req, res, next) => {
-//     res.header('Access-Control-Allow-Origin', '*');
-//     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-//     next();
-// });
+app.use(cors()); // Habilita CORS
 app.use(express.json());
 
 app.use("/users", Users);
@@ -33,4 +30,3 @@ main()
 https.createServer(options, app).listen(port, '0.0.0.0', () => {
     console.log(`Backend de SharingMe emitiendo por el puerto ${port}`);
 });
-
