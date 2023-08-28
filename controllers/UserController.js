@@ -31,7 +31,19 @@ const UserController = {
     getUsers: async (req, res) => {
         try {
             const users = await User.find();
-            res.json(users);
+            const modifiedUsers = users.map(user => ({
+                _id: user._id,
+                userName: user.userName,
+                backgroundColor: user.backgroundColor,
+                tag1: user.tag1,
+                tag2: user.tag2,
+                tag3: user.tag3,
+                links: user.links,
+                description: user.description,
+                location: user.location
+            }));
+
+            res.json(modifiedUsers);
         } catch (error) {
             res.status(500).json({ error: "Error al traer los usuarios" });
         }
