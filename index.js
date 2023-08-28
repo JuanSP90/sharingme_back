@@ -17,5 +17,5 @@ main()
     .catch(err => console.log(err))
 
 app.listen(process.env.PORT || `0.0.0.0:$PORT`, () => {
-    console.log(`Backend de SharingMe emitiendo por el puerto ${process.env.PORT}`)
+    console.log(`Backend de SharingMe funcionando!`)
 });
