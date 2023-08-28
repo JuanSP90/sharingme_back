@@ -17,6 +17,6 @@ main()
     .then(() => console.log('Estamos conectados a la DB'))
     .catch(err => console.log(err))
 
-// app.listen(port, () => {
-//     console.log(`Backend de SharingMe emitiendo por el puerto ${port}`)
-// });
+app.listen(process.env.PORT || `0.0.0.0:$PORT`, () => {
+    console.log(`Backend de SharingMe emitiendo por el puerto ${port}`)
+});
