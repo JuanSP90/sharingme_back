@@ -65,7 +65,18 @@ const UserController = {
         const { userName } = req.params;
         try {
             const user = await User.findOne({ userName: userName });
-            res.json(user);
+            const modifiedUser = {
+                _id: user._id,
+                userName: user.userName,
+                backgroundColor: user.backgroundColor,
+                tag1: user.tag1,
+                tag2: user.tag2,
+                tag3: user.tag3,
+                links: user.links,
+                description: user.description,
+                location: user.location
+            };
+            res.json(modifiedUser);
         } catch (error) {
             res.status(500).json({ error: "Error al buscar el usuario" });
         }
