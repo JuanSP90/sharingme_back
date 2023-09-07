@@ -82,6 +82,13 @@ const UserController = {
 
     addUser: async (req, res) => {
         const { email, password, userName } = req.body;
+
+        const trimmedemail = email.trim();
+        const trimmedUserName = userName.trim();
+
+        if (/[Ññ]/.test(userName) || /[Ññ]/.test(email) || /[Ññ]/.test(password)) {
+            return res.status(400).json({ error: "Los registros no pueden contener la letra 'Ñ'" });
+        }
         try {
             const existingEmail = await User.findOne({ email });
             if (existingEmail) {
@@ -95,9 +102,9 @@ const UserController = {
                     .json({ error: "El nombre de usuario ya está registrado" });
             }
             const newUser = new User({
-                email,
+                email: trimmedemail,
                 password,
-                userName,
+                userName: trimmedUserName,
                 role: 1,
                 links: [],
                 description: '',
