@@ -178,7 +178,6 @@ const UserController = {
             if (email) {
                 const existingEmail = await User.findOne({ email });
                 if (existingEmail) {
-                    console.log('soy existingEmail', existingEmail)
                     return res.status(401).json({ error: "El email ya está registrado" });
                 }
             }
